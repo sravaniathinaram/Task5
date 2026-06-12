@@ -1,18 +1,20 @@
 <?php
 include 'config.php';
 
-if(isset($_POST['register'])) {
+if(isset($_POST['register'])){
 
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $username=$_POST['username'];
 
-    $sql = "INSERT INTO users(username, password)
-            VALUES('$username', '$password')";
+    $password=password_hash(
+        $_POST['password'],
+        PASSWORD_DEFAULT
+    );
 
-    if(mysqli_query($conn, $sql)) {
+    $sql="INSERT INTO users(username,password)
+          VALUES('$username','$password')";
+
+    if(mysqli_query($conn,$sql)){
         echo "Registration Successful!";
-    } else {
-        echo "Error: " . mysqli_error($conn);
     }
 }
 ?>
@@ -20,21 +22,40 @@ if(isset($_POST['register'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Register</title>
+<title>Register</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>User Registration</h2>
+<div class="container">
+
+<h2>Register</h2>
 
 <form method="POST">
-    <input type="text" name="username" placeholder="Enter Username" required>
-    <br><br>
 
-    <input type="password" name="password" placeholder="Enter Password" required>
-    <br><br>
+<input type="text"
+name="username"
+placeholder="Username"
+required>
 
-    <button type="submit" name="register">Register</button>
+<input type="password"
+name="password"
+placeholder="Password"
+required>
+
+<button type="submit"
+name="register">
+Register
+</button>
+
 </form>
+
+<p>
+Already have an account?
+<a href="login.php">Login</a>
+</p>
+
+</div>
 
 </body>
 </html>
