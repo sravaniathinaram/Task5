@@ -5,6 +5,10 @@ if(isset($_POST['submit'])){
 
     $title=$_POST['title'];
     $content=$_POST['content'];
+    if(empty($title) || empty($content)){
+    echo "All fields are required";
+    exit();
+}
 
     $sql="INSERT INTO posts(title,content)
           VALUES('$title','$content')";

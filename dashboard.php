@@ -1,10 +1,14 @@
 <?php
 session_start();
-include 'config.php';
+$conn = mysqli_connect("localhost","root","","blog");
+
+if(!$conn){
+    die("Connection failed");
+}
 
 if(!isset($_SESSION['username'])){
-header("Location: login.php");
-exit();
+    header("Location: login.php");
+    exit();
 }
 ?>
 
@@ -78,8 +82,9 @@ echo "<h3>".$row['title']."</h3>";
 echo "<p>".$row['content']."</p>";
 
 echo "<a href='edit.php?id=".$row['id']."'>Edit</a> | ";
-
+if($_SESSION['role']=="admin"){
 echo "<a href='delete.php?id=".$row['id']."'>Delete</a>";
+}
 
 echo "</div>";
 }

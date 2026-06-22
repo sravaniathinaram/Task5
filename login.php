@@ -4,27 +4,36 @@ include 'config.php';
 
 if(isset($_POST['login'])){
 
-    $username = $_POST['username'];
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE username='$username'";
-    $result = mysqli_query($conn,$sql);
+    if(empty($username) || empty($password)){
+        die("Please fill all fields");
+    }
 
-    if(mysqli_num_rows($result)>0){
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username=?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
 
-        $user = mysqli_fetch_assoc($result);
+    $result = $stmt->get_result();
 
-        if(password_verify($password,$user['password'])){
+    if($result->num_rows > 0){
 
-            $_SESSION['username']=$username;
+        $user = $result->fetch_assoc();
+
+        if(password_verify($password, $user['password'])){
+
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role'];
 
             header("Location: dashboard.php");
             exit();
 
-        }else{
+        } else {
             echo "Wrong Password!";
         }
-    }else{
+
+    } else {
         echo "User Not Found!";
     }
 }
@@ -33,30 +42,25 @@ if(isset($_POST['login'])){
 <!DOCTYPE html>
 <html>
 <head>
-<title>Login</title>
-<link rel="stylesheet" href="style.css">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
+    <h2>Login</h2>
 
-<h2>Login</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
 
-<form method="POST">
+        <button type="submit" name="login">Login</button>
+    </form>
 
-<input type="text" name="username" placeholder="Username" required>
-
-<input type="password" name="password" placeholder="Password" required>
-
-<button type="submit" name="login">Login</button>
-
-</form>
-
-<p>
-Don't have an account?
-<a href="register.php">Register</a>
-</p>
-
+    <p>
+        Don't have an account?
+        <a href="register.php">Register</a>
+    </p>
 </div>
 
 </body>
